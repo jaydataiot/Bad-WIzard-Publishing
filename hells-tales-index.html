@@ -69,6 +69,62 @@
       50% { transform: translateY(-.7rem) scaleY(1.06); opacity: .33; }
     }
 
+    .falling-souls {
+      position: fixed;
+      inset: 0;
+      z-index: 24;
+      pointer-events: none;
+      overflow: hidden;
+      opacity: 1;
+    }
+    .falling-soul {
+      position: absolute;
+      left: var(--x);
+      top: -30vh;
+      width: var(--size);
+      height: auto;
+      color: rgba(5, 1, 0, .9);
+      transform-origin: 50% 46%;
+      mix-blend-mode: normal;
+      filter:
+        drop-shadow(0 0 4px rgba(255, 132, 55, .9))
+        drop-shadow(0 0 16px rgba(255, 44, 0, .68))
+        drop-shadow(0 0 34px rgba(128, 0, 0, .42))
+        blur(var(--blur, 0px));
+      animation:
+        soulFall var(--duration) linear infinite,
+        soulFade var(--duration) ease-in-out infinite;
+      animation-delay: var(--delay);
+      will-change: transform, opacity;
+    }
+    .falling-soul img {
+      display: block;
+      width: 100%;
+      height: auto;
+      overflow: visible;
+      transform: rotate(var(--tilt));
+      animation: soulFlail var(--flail) ease-in-out infinite alternate;
+      animation-delay: calc(var(--delay) * -.31);
+    }
+    .falling-soul:nth-child(3n) { color: rgba(8, 1, 0, .82); }
+    .falling-soul:nth-child(4n) { color: rgba(48, 5, 1, .76); opacity: .84; }
+    .falling-soul:nth-child(5n) img { animation-direction: alternate-reverse; }
+    @keyframes soulFall {
+      0% { transform: translate3d(0, -34vh, 0) rotate(var(--start-rot)); }
+      45% { transform: translate3d(var(--drift-mid), 64vh, 0) rotate(calc(var(--start-rot) + var(--spin) * .48)); }
+      100% { transform: translate3d(var(--drift-end), 138vh, 0) rotate(calc(var(--start-rot) + var(--spin))); }
+    }
+    @keyframes soulFade {
+      0%, 8% { opacity: 0; }
+      16% { opacity: var(--alpha); }
+      74% { opacity: calc(var(--alpha) * .88); }
+      100% { opacity: 0; }
+    }
+    @keyframes soulFlail {
+      0% { transform: rotate(calc(var(--tilt) - 13deg)) skewX(-3deg); }
+      100% { transform: rotate(calc(var(--tilt) + 15deg)) skewX(4deg); }
+    }
+
     header {
       position: fixed;
       top: 0;
@@ -578,16 +634,52 @@
       nav { justify-content: center; margin-top: .8rem; }
       .hero { padding-top: 9rem; background-position: 53% center; }
       .story-grid, .archive-grid { grid-template-columns: 1fr; }
+      .falling-soul { --size: 32px !important; }
+      .falling-soul:nth-child(3),
+      .falling-soul:nth-child(4),
+      .falling-soul:nth-child(5),
+      .falling-soul:nth-child(9),
+      .falling-soul:nth-child(12) { display: none; }
+      .falling-soul:nth-child(1) { --x: -9vw !important; --drift-mid: 2vw !important; --drift-end: 6vw !important; }
+      .falling-soul:nth-child(2) { --x: 8vw !important; --drift-mid: -5vw !important; --drift-end: -10vw !important; }
+      .falling-soul:nth-child(6) { --x: -15vw !important; --drift-mid: 8vw !important; --drift-end: 13vw !important; }
+      .falling-soul:nth-child(7) { --x: 93vw !important; --drift-mid: -5vw !important; --drift-end: -12vw !important; }
+      .falling-soul:nth-child(8) { --x: 104vw !important; --drift-mid: -10vw !important; --drift-end: -17vw !important; }
+      .falling-soul:nth-child(10) { --x: 98vw !important; --drift-mid: -6vw !important; --drift-end: -14vw !important; }
+      .falling-soul:nth-child(11) { --x: 88vw !important; --drift-mid: -4vw !important; --drift-end: -11vw !important; }
+      .falling-soul:nth-child(13) { --x: 5vw !important; --drift-mid: -2vw !important; --drift-end: -8vw !important; }
+      .falling-soul:nth-child(14) { --x: 91vw !important; --drift-mid: -3vw !important; --drift-end: -8vw !important; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+      .falling-souls { display: none; }
     }
   </style>
 </head>
 <body>
+  <!-- Continuous infernal ambience. Browsers may require one user interaction before audible autoplay is permitted. -->
+  <audio id="hellAmbientAudio" src="assets/audio/hell-1.mp3" autoplay loop preload="auto" playsinline></audio>
+  <audio id="hellAmbientAudio" src="assets/audio/hell-4.mp3" autoplay loop preload="auto" playsinline></audio>
   <canvas id="embers" aria-hidden="true"></canvas>
   <canvas id="inferno" aria-hidden="true"></canvas>
   <div class="hell-fog" aria-hidden="true"></div>
+
+  <div class="falling-souls" aria-hidden="true">
+    <span class="falling-soul" style="--x:4vw;--size:130px;--duration:15s;--delay:-3s;--tilt:-18deg;--start-rot:-12deg;--spin:390deg;--drift-mid:3vw;--drift-end:8vw;--alpha:.62;--flail:.88s;"><img src="assets/falling-souls/soul-01.png" alt=""></span>
+    <span class="falling-soul" style="--x:12vw;--size:86px;--duration:19s;--delay:-11s;--tilt:31deg;--start-rot:20deg;--spin:-330deg;--drift-mid:-2vw;--drift-end:4vw;--alpha:.52;--flail:1.05s;--blur:.2px;"><img src="assets/falling-souls/soul-02.png" alt=""></span>
+    <span class="falling-soul" style="--x:18vw;--size:122px;--duration:22s;--delay:-7s;--tilt:-46deg;--start-rot:44deg;--spin:510deg;--drift-mid:-5vw;--drift-end:-10vw;--alpha:.46;--flail:.74s;--blur:.5px;"><img src="assets/falling-souls/soul-03.png" alt=""></span>
+    <span class="falling-soul" style="--x:7vw;--size:152px;--duration:26s;--delay:-18s;--tilt:12deg;--start-rot:-55deg;--spin:-430deg;--drift-mid:2vw;--drift-end:7vw;--alpha:.36;--flail:1.22s;--blur:.7px;"><img src="assets/falling-souls/soul-04.png" alt=""></span>
+    <span class="falling-soul" style="--x:23vw;--size:108px;--duration:13s;--delay:-5s;--tilt:54deg;--start-rot:8deg;--spin:270deg;--drift-mid:-5vw;--drift-end:-12vw;--alpha:.58;--flail:.69s;"><img src="assets/falling-souls/soul-05.png" alt=""></span>
+    <span class="falling-soul" style="--x:1vw;--size:92px;--duration:17s;--delay:-14s;--tilt:-66deg;--start-rot:70deg;--spin:-500deg;--drift-mid:7vw;--drift-end:13vw;--alpha:.5;--flail:.94s;"><img src="assets/falling-souls/soul-06.png" alt=""></span>
+    <span class="falling-soul" style="--x:83vw;--size:134px;--duration:16s;--delay:-8s;--tilt:23deg;--start-rot:18deg;--spin:-380deg;--drift-mid:-4vw;--drift-end:-9vw;--alpha:.58;--flail:.82s;"><img src="assets/falling-souls/soul-07.png" alt=""></span>
+    <span class="falling-soul" style="--x:92vw;--size:112px;--duration:21s;--delay:-2s;--tilt:-35deg;--start-rot:-30deg;--spin:410deg;--drift-mid:1vw;--drift-end:-6vw;--alpha:.48;--flail:1.12s;--blur:.3px;"><img src="assets/falling-souls/soul-08.png" alt=""></span>
+    <span class="falling-soul" style="--x:76vw;--size:148px;--duration:25s;--delay:-16s;--tilt:58deg;--start-rot:60deg;--spin:-530deg;--drift-mid:7vw;--drift-end:15vw;--alpha:.4;--flail:.77s;--blur:.6px;"><img src="assets/falling-souls/soul-09.png" alt=""></span>
+    <span class="falling-soul" style="--x:96vw;--size:126px;--duration:18s;--delay:-12s;--tilt:-8deg;--start-rot:-80deg;--spin:460deg;--drift-mid:-6vw;--drift-end:-14vw;--alpha:.52;--flail:.91s;"><img src="assets/falling-souls/soul-10.png" alt=""></span>
+    <span class="falling-soul" style="--x:88vw;--size:76px;--duration:14s;--delay:-6s;--tilt:77deg;--start-rot:33deg;--spin:320deg;--drift-mid:-3vw;--drift-end:-10vw;--alpha:.6;--flail:.71s;"><img src="assets/falling-souls/soul-02.png" alt=""></span>
+    <span class="falling-soul" style="--x:70vw;--size:104px;--duration:20s;--delay:-19s;--tilt:-50deg;--start-rot:10deg;--spin:-360deg;--drift-mid:8vw;--drift-end:18vw;--alpha:.42;--flail:1.18s;--blur:.4px;"><img src="assets/falling-souls/soul-01.png" alt=""></span>
+    <span class="falling-soul" style="--x:14vw;--size:66px;--duration:12s;--delay:-9s;--tilt:18deg;--start-rot:-35deg;--spin:300deg;--drift-mid:1vw;--drift-end:4vw;--alpha:.5;--flail:.66s;--blur:.2px;"><img src="assets/falling-souls/soul-08.png" alt=""></span>
+    <span class="falling-soul" style="--x:81vw;--size:72px;--duration:12.8s;--delay:-4s;--tilt:-21deg;--start-rot:35deg;--spin:-300deg;--drift-mid:2vw;--drift-end:8vw;--alpha:.54;--flail:.7s;"><img src="assets/falling-souls/soul-05.png" alt=""></span>
+  </div>
 
   <svg class="demon d1" viewBox="0 0 200 280" aria-hidden="true">
     <path fill="#ef3d1b" d="M52 58C22 29 28 5 31 0c8 26 30 22 47 34 8-19 19-28 22-30 4 13 13 23 22 30 17-13 39-9 47-34 3 5 9 29-21 58 25 21 41 55 39 97-3 58-30 96-52 119-8 8-14 5-12-7 5-36-5-62-23-77-18 15-28 41-23 77 2 12-4 15-12 7-22-23-49-61-52-119-2-42 14-76 39-97zm48 37c-22 0-40 18-40 40s18 40 40 40 40-18 40-40-18-40-40-40z"/>
@@ -1158,6 +1250,31 @@
         demon.style.marginTop = (y * (index ? -14 : 14)) + 'px';
       });
     });
-  </script>
+  
+    // Keep the Hell's Tales ambient soundtrack playing continuously.
+    const hellAmbientAudio = document.getElementById('hellAmbientAudio');
+    if (hellAmbientAudio) {
+      hellAmbientAudio.loop = true;
+      hellAmbientAudio.volume = 1.0;
+
+      const startHellAudio = () => {
+        const attempt = hellAmbientAudio.play();
+        if (attempt && typeof attempt.catch === 'function') attempt.catch(() => {});
+      };
+
+      startHellAudio();
+      window.addEventListener('load', startHellAudio, { once: true });
+
+      // Audible autoplay is blocked by some browsers. The first click, tap,
+      // key press, or scroll starts the soundtrack without interrupting navigation.
+      ['pointerdown', 'touchstart', 'keydown', 'wheel'].forEach(eventName => {
+        document.addEventListener(eventName, startHellAudio, { once: true, passive: true });
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && hellAmbientAudio.paused) startHellAudio();
+      });
+    }
+</script>
 </body>
 </html>
